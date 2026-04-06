@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  linux:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            name: Linux x86_64
+            artifact: dbcextract-x86_64-linux-gnu
+          - os: ubuntu-24.04-arm
+            name: Linux ARM64
+            artifact: dbcextract-aarch64-linux-gnu
+
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y cmake ninja-build protobuf-compiler libprotobuf-dev libabsl-dev
+
+      - name: Download release artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p lib
+          gh release download --repo dnbmch/dbc-parser-lib --pattern "${{ matrix.artifact }}*.tar.gz" --dir .
+          tar xzf ${{ matrix.artifact }}*.tar.gz -C lib/
+
+      - name: Configure
+        run: cmake -B build -G Ninja -DDBC_LIB_DIR=lib
+
+      - name: Build examples
+        run: cmake --build build
+
+  windows:
+    name: Windows MinGW
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+
+    steps:
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: false
+          install: >-
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-ninja
+            mingw-w64-x86_64-protobuf
+
+      - uses: actions/checkout@v4
+
+      - name: Download release artifacts
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p lib
+          gh release download --repo dnbmch/dbc-parser-lib --pattern "dbcextract-x86_64-windows-mingw*.tar.gz" --dir .
+          tar xzf dbcextract-x86_64-windows-mingw*.tar.gz -C lib/
+
+      - name: Configure
+        run: cmake -B build -G Ninja -DDBC_LIB_DIR=lib
+
+      - name: Build examples
+        run: cmake --build build
