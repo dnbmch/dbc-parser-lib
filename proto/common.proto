@@ -1,0 +1,52 @@
+syntax = "proto3";
+package dbc.v1;
+
+enum ByteOrder {
+  BYTE_ORDER_UNSPECIFIED = 0;
+  BYTE_ORDER_LITTLE_ENDIAN = 1;  // Intel, @1
+  BYTE_ORDER_BIG_ENDIAN = 2;     // Motorola, @0
+}
+
+enum ValueType {
+  VALUE_TYPE_UNSPECIFIED = 0;
+  VALUE_TYPE_INTEGER = 1;         // signed or unsigned (default)
+  VALUE_TYPE_FLOAT32 = 2;         // IEEE 754 single
+  VALUE_TYPE_FLOAT64 = 3;         // IEEE 754 double
+}
+
+enum MultiplexType {
+  MULTIPLEX_NONE = 0;
+  MULTIPLEX_MULTIPLEXOR = 1;      // M - this signal is the mux selector
+  MULTIPLEX_MULTIPLEXED = 2;      // m<N> - conditional on mux value
+  MULTIPLEX_MULTIPLEXED_AND_MULTIPLEXOR = 3;  // m<N>M - both roles (extended mux)
+}
+
+enum AttributeValueType {
+  ATTR_TYPE_UNSPECIFIED = 0;
+  ATTR_TYPE_INT = 1;
+  ATTR_TYPE_FLOAT = 2;
+  ATTR_TYPE_STRING = 3;
+  ATTR_TYPE_ENUM = 4;
+  ATTR_TYPE_HEX = 5;
+}
+
+enum AttributeScope {
+  ATTR_SCOPE_UNSPECIFIED = 0;
+  ATTR_SCOPE_GLOBAL = 1;
+  ATTR_SCOPE_NODE = 2;
+  ATTR_SCOPE_MESSAGE = 3;
+  ATTR_SCOPE_SIGNAL = 4;
+}
+
+enum EnvironmentVariableType {
+  ENV_VAR_TYPE_UNSPECIFIED = 0;
+  ENV_VAR_TYPE_INTEGER = 1;     // type 0 in DBC
+  ENV_VAR_TYPE_FLOAT = 2;       // type 1 in DBC
+  ENV_VAR_TYPE_STRING = 3;      // type 2 in DBC
+}
+
+enum RelationalAttributeScope {
+  REL_ATTR_SCOPE_UNSPECIFIED = 0;
+  REL_ATTR_SCOPE_BU_SG_REL = 1;  // node-to-signal
+  REL_ATTR_SCOPE_BU_BO_REL = 2;  // node-to-message
+}

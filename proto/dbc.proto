@@ -1,0 +1,154 @@
+syntax = "proto3";
+package dbc.v1;
+import "common.proto";
+
+message DbcFile {
+  string version = 1;
+  repeated string new_symbols = 2;
+  uint32 bus_speed = 3;                                    // BS_
+  repeated Node nodes = 4;                                 // BU_
+  repeated Message messages = 5;                           // BO_
+  repeated ValueTable value_tables = 6;                    // VAL_TABLE_
+  repeated AttributeDefinition attribute_definitions = 7;  // BA_DEF_
+  repeated AttributeDefault attribute_defaults = 8;        // BA_DEF_DEF_
+  repeated AttributeValue attribute_values = 9;            // BA_ (global scope only)
+  repeated EnvironmentVariable environment_variables = 10; // EV_
+  repeated SignalGroup signal_groups = 11;                 // SIG_GROUP_
+  repeated ExtendedMultiplexValue extended_mux_values = 12;  // SG_MUL_VAL_
+  repeated RelationalAttributeDefinition relational_attribute_definitions = 13;  // BA_DEF_REL_
+  repeated AttributeDefault relational_attribute_defaults = 14;                  // BA_DEF_DEF_REL_
+  repeated RelationalAttributeValue relational_attribute_values = 15;            // BA_REL_
+}
+
+message Node {
+  string name = 1;
+  string comment = 2;                      // from CM_ BU_
+  repeated AttributeValue attributes = 3;  // from BA_ BU_
+}
+
+message Message {
+  uint32 id = 1;                           // CAN ID (bit 31 stripped)
+  string name = 2;
+  uint32 dlc = 3;
+  string sender = 4;
+  bool is_extended_id = 5;                 // true if original ID had bit 31 set
+  repeated Signal signals = 6;
+  string comment = 7;                      // from CM_ BO_
+  repeated string transmitters = 8;        // from BO_TX_BU_
+  repeated AttributeValue attributes = 9;  // from BA_ BO_
+}
+
+message Signal {
+  string name = 1;
+  uint32 start_bit = 2;
+  uint32 bit_length = 3;
+  ByteOrder byte_order = 4;
+  bool is_signed = 5;
+  double factor = 6;
+  double offset = 7;
+  double min = 8;
+  double max = 9;
+  string unit = 10;
+  repeated string receivers = 11;
+  string comment = 12;                                     // from CM_ SG_
+  ValueType value_type = 13;                               // from SIG_VALTYPE_
+  repeated ValueDescription value_descriptions = 14;       // from VAL_
+  MultiplexType multiplex_type = 15;
+  uint32 multiplex_value = 16;                             // valid when multiplex_type == MULTIPLEXED
+  repeated AttributeValue attributes = 17;                 // from BA_ SG_
+  repeated ExtendedMultiplexValue extended_mux_values = 18; // from SG_MUL_VAL_ (signal-level view)
+}
+
+message ValueDescription {
+  int64 value = 1;
+  string description = 2;
+}
+
+message ValueTable {
+  string name = 1;
+  repeated ValueDescription entries = 2;
+}
+
+message AttributeDefinition {
+  string name = 1;
+  AttributeScope scope = 2;
+  AttributeValueType value_type = 3;
+  int64 int_min = 4;
+  int64 int_max = 5;
+  double float_min = 6;
+  double float_max = 7;
+  repeated string enum_values = 8;
+}
+
+message AttributeDefault {
+  string name = 1;
+  string value = 2;
+}
+
+message AttributeValue {
+  string name = 1;
+  string value = 2;
+  string node_name = 3;
+  uint32 message_id = 4;
+  string signal_name = 5;
+  AttributeScope scope = 6;
+}
+
+// EV_ <name>: <type> [<min>|<max>] "<unit>" <init> <id> <access_type> <access_nodes> ;
+message EnvironmentVariable {
+  string name = 1;
+  EnvironmentVariableType var_type = 2;
+  double min = 3;
+  double max = 4;
+  string unit = 5;
+  double initial_value = 6;
+  uint32 ev_id = 7;
+  string access_type = 8;              // DUMMY_NODE_VECTOR0, DUMMY_NODE_VECTOR8000, etc.
+  repeated string access_nodes = 9;
+  string comment = 10;                 // from CM_ EV_
+  uint32 data_size = 11;              // from ENVVAR_DATA_ (0 if not present)
+}
+
+// SIG_GROUP_ <msg_id> <group_name> <repetitions> : <signal1> <signal2> ... ;
+message SignalGroup {
+  uint32 message_id = 1;
+  string name = 2;
+  uint32 repetitions = 3;
+  repeated string signal_names = 4;
+}
+
+// SG_MUL_VAL_ <msg_id> <signal_name> <mux_signal_name> <range1_min>-<range1_max>[, <range2_min>-<range2_max>] ;
+message ExtendedMultiplexValue {
+  uint32 message_id = 1;
+  string signal_name = 2;
+  string mux_signal_name = 3;
+  repeated MuxRange ranges = 4;
+}
+
+message MuxRange {
+  uint32 from = 1;
+  uint32 to = 2;
+}
+
+// BA_DEF_REL_ <rel_scope> "<name>" <type> [params] ;
+message RelationalAttributeDefinition {
+  string name = 1;
+  RelationalAttributeScope scope = 2;
+  AttributeValueType value_type = 3;
+  int64 int_min = 4;
+  int64 int_max = 5;
+  double float_min = 6;
+  double float_max = 7;
+  repeated string enum_values = 8;
+}
+
+// BA_REL_ "<name>" BU_SG_REL_ <node> SG_ <msg_id> <signal> <value> ;
+// BA_REL_ "<name>" BU_BO_REL_ <node> BO_ <msg_id> <value> ;
+message RelationalAttributeValue {
+  string name = 1;
+  RelationalAttributeScope scope = 2;
+  string node_name = 3;
+  uint32 message_id = 4;
+  string signal_name = 5;            // for BU_SG_REL_ only
+  string value = 6;
+}
