@@ -42,7 +42,7 @@ jobs:
       - name: Build examples
         run: cmake --build build
 
-  windows:
+  windows-mingw:
     name: Windows MinGW
     runs-on: windows-latest
     defaults:
@@ -76,3 +76,43 @@ jobs:
 
       - name: Build examples
         run: cmake --build build
+
+  windows-msvc:
+    name: Windows MSVC
+    runs-on: windows-latest
+    env:
+      VCPKG_DEFAULT_TRIPLET: x64-windows-static
+      VCPKG_BINARY_SOURCES: clear;files,${{ github.workspace }}/vcpkg-cache,readwrite
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Restore vcpkg binary cache
+        uses: actions/cache@v4
+        with:
+          path: vcpkg-cache
+          key: vcpkg-x64-windows-static-${{ hashFiles('.github/workflows/ci.yml') }}
+          restore-keys: vcpkg-x64-windows-static-
+
+      - name: Install protobuf via vcpkg
+        run: vcpkg install protobuf
+
+      - name: Download release artifacts
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p lib
+          gh release download --repo dnbmch/dbc-parser-lib --pattern "dbcextract-x86_64-windows-msvc*.tar.gz" --dir .
+          tar xzf dbcextract-x86_64-windows-msvc*.tar.gz -C lib/
+
+      - name: Configure
+        run: >
+          cmake -B build
+          -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
+          -DVCPKG_TARGET_TRIPLET=x64-windows-static
+          -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded
+          -DDBC_LIB_DIR=lib
+
+      - name: Build examples
+        run: cmake --build build --config Release
