@@ -1,6 +1,6 @@
 syntax = "proto3";
-package dbc.v1;
-import "common.proto";
+package dbc;
+import "dbc/common.proto";
 
 message DbcFile {
   string version = 1;

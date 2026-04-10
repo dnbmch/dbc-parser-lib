@@ -15,8 +15,8 @@
 #include <iostream>
 #include <string>
 
-#include "dbcfile.h"
-#include "extract.h"
+#include "dbc/dbcfile.h"
+#include "dbc/extract.h"
 
 using namespace std;
 
@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
     }
 
     // 2. Extract into the protobuf contract
-    dbc::v1::DbcFile result = extract::extractFile(file.get());
+    dbc::DbcFile result = dbc::extract::extractFile(file.get());
 
     // 3. Walk the extracted data
     cout << "DBC: " << argv[1] << endl;
@@ -61,7 +61,7 @@ int main(int argc, char* argv[]) {
         for (const auto& sig : msg.signals()) {
             cout << "    " << sig.name()
                  << "  [" << sig.start_bit() << "|" << sig.bit_length()
-                 << "@" << (sig.byte_order() == dbc::v1::BYTE_ORDER_LITTLE_ENDIAN ? "1" : "0")
+                 << "@" << (sig.byte_order() == dbc::BYTE_ORDER_LITTLE_ENDIAN ? "1" : "0")
                  << (sig.is_signed() ? "-" : "+")
                  << "]";
 
@@ -72,11 +72,11 @@ int main(int argc, char* argv[]) {
                 cout << " \"" << sig.unit() << "\"";
 
             // Multiplexing
-            if (sig.multiplex_type() == dbc::v1::MULTIPLEX_MULTIPLEXOR)
+            if (sig.multiplex_type() == dbc::MULTIPLEX_MULTIPLEXOR)
                 cout << " MUX";
-            else if (sig.multiplex_type() == dbc::v1::MULTIPLEX_MULTIPLEXED)
+            else if (sig.multiplex_type() == dbc::MULTIPLEX_MULTIPLEXED)
                 cout << " m" << sig.multiplex_value();
-            else if (sig.multiplex_type() == dbc::v1::MULTIPLEX_MULTIPLEXED_AND_MULTIPLEXOR)
+            else if (sig.multiplex_type() == dbc::MULTIPLEX_MULTIPLEXED_AND_MULTIPLEXOR)
                 cout << " m" << sig.multiplex_value() << "M";
 
             cout << endl;
@@ -95,7 +95,7 @@ int main(int argc, char* argv[]) {
         cout << "\nEnvironment variables (" << result.environment_variables_size() << "):" << endl;
         for (const auto& ev : result.environment_variables()) {
             cout << "  " << ev.name()
-                 << "  type=" << dbc::v1::EnvironmentVariableType_Name(ev.var_type())
+                 << "  type=" << dbc::EnvironmentVariableType_Name(ev.var_type())
                  << "  [" << ev.min() << "|" << ev.max() << "]";
             if (!ev.unit().empty()) cout << " \"" << ev.unit() << "\"";
             cout << endl;

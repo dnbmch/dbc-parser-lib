@@ -1,5 +1,5 @@
 syntax = "proto3";
-package dbc.v1;
+package dbc;
 
 enum ByteOrder {
   BYTE_ORDER_UNSPECIFIED = 0;

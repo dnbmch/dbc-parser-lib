@@ -17,8 +17,8 @@
 #include <iostream>
 #include <string>
 
-#include "dbcfile.h"
-#include "extract.h"
+#include "dbc/dbcfile.h"
+#include "dbc/extract.h"
 
 #include <google/protobuf/util/json_util.h>
 
@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
     }
 
     // 2. Extract into the protobuf contract
-    dbc::v1::DbcFile result = extract::extractFile(file.get());
+    dbc::DbcFile result = dbc::extract::extractFile(file.get());
 
     // 3. Configure JSON output (pretty-print with enum names)
     google::protobuf::util::JsonPrintOptions opts;

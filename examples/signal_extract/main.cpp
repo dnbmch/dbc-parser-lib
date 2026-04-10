@@ -23,8 +23,8 @@
 #include <iostream>
 #include <string>
 
-#include "dbcfile.h"
-#include "extract.h"
+#include "dbc/dbcfile.h"
+#include "dbc/extract.h"
 
 using namespace std;
 
@@ -104,14 +104,14 @@ struct DecodedSignal {
     string value_desc;
 };
 
-static DecodedSignal decodeSignal(const dbc::v1::Signal& sig,
+static DecodedSignal decodeSignal(const dbc::Signal& sig,
                                   const uint8_t* data, uint32_t dlc) {
     DecodedSignal dec;
     dec.name = sig.name();
     dec.unit = sig.unit();
 
     // Extract raw bits
-    if (sig.byte_order() == dbc::v1::BYTE_ORDER_LITTLE_ENDIAN)
+    if (sig.byte_order() == dbc::BYTE_ORDER_LITTLE_ENDIAN)
         dec.raw = extractRawIntel(data, dlc, sig.start_bit(), sig.bit_length());
     else
         dec.raw = extractRawMotorola(data, dlc, sig.start_bit(), sig.bit_length());
@@ -142,9 +142,9 @@ static DecodedSignal decodeSignal(const dbc::v1::Signal& sig,
 // Decode a CAN frame against a DBC message
 // ---------------------------------------------------------------------------
 
-static void decodeFrame(const dbc::v1::DbcFile& dbc, uint32_t canId,
+static void decodeFrame(const dbc::DbcFile& dbc, uint32_t canId,
                         const uint8_t* data, uint32_t dlc) {
-    const dbc::v1::Message* msg = nullptr;
+    const dbc::Message* msg = nullptr;
     for (int i = 0; i < dbc.messages_size(); i++) {
         if (dbc.messages(i).id() == canId) {
             msg = &dbc.messages(i);
@@ -163,8 +163,8 @@ static void decodeFrame(const dbc::v1::DbcFile& dbc, uint32_t canId,
     // Pass 1: find multiplexer value (if any)
     int64_t muxValue = -1;
     for (const auto& sig : msg->signals()) {
-        if (sig.multiplex_type() == dbc::v1::MULTIPLEX_MULTIPLEXOR ||
-            sig.multiplex_type() == dbc::v1::MULTIPLEX_MULTIPLEXED_AND_MULTIPLEXOR) {
+        if (sig.multiplex_type() == dbc::MULTIPLEX_MULTIPLEXOR ||
+            sig.multiplex_type() == dbc::MULTIPLEX_MULTIPLEXED_AND_MULTIPLEXOR) {
             DecodedSignal mux = decodeSignal(sig, data, dlc);
             muxValue = static_cast<int64_t>(mux.raw);
             break;
@@ -175,12 +175,12 @@ static void decodeFrame(const dbc::v1::DbcFile& dbc, uint32_t canId,
     for (const auto& sig : msg->signals()) {
         // Skip multiplexed signals that don't match current mux value
         if (muxValue >= 0) {
-            if (sig.multiplex_type() == dbc::v1::MULTIPLEX_MULTIPLEXED) {
+            if (sig.multiplex_type() == dbc::MULTIPLEX_MULTIPLEXED) {
                 if (sig.multiplex_value() != static_cast<uint32_t>(muxValue))
                     continue;
             }
             // m<N>M signals: check their mux value against parent before decoding
-            if (sig.multiplex_type() == dbc::v1::MULTIPLEX_MULTIPLEXED_AND_MULTIPLEXOR) {
+            if (sig.multiplex_type() == dbc::MULTIPLEX_MULTIPLEXED_AND_MULTIPLEXOR) {
                 if (sig.multiplex_value() != static_cast<uint32_t>(muxValue))
                     continue;
             }
@@ -215,7 +215,7 @@ int main(int argc, char* argv[]) {
         cerr << "Failed to load: " << argv[1] << endl;
         return 1;
     }
-    dbc::v1::DbcFile dbc = extract::extractFile(file.get());
+    dbc::DbcFile dbc = dbc::extract::extractFile(file.get());
 
     cout << "Loaded: " << argv[1] << " (" << dbc.messages_size() << " messages)" << endl;
     cout << endl;
