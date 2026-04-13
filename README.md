@@ -13,6 +13,7 @@ Prebuilt static libraries are available on the [Releases](https://github.com/dnb
 | `dbcextract-x86_64-windows-mingw` | Windows MinGW GCC (.a) |
 | `dbcextract-x86_64-linux-gnu` | Linux x86_64 (.a) |
 | `dbcextract-aarch64-linux-gnu` | Linux ARM64 (.a) |
+| `dbcextract-x86_64-windows-msvc` | Windows MSVC (.lib) |
 | `dbcextract-headers` | Public headers and proto files |
 
 ## Quick Start
@@ -25,7 +26,7 @@ cd dbc-parser-lib
 # 2. Download and extract the prebuilt library for your platform
 #    (from the Releases page, extract into lib/)
 mkdir -p lib
-tar xzf dbcextract-x86_64-linux-gnu-v0.1.0.tar.gz -C lib/
+tar xzf dbcextract-x86_64-linux-gnu-v0.2.0.tar.gz -C lib/
 
 # 3. Build the examples
 cmake -B build -DDBC_LIB_DIR=lib
