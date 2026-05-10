@@ -47,11 +47,11 @@ cmake --build build
 ## Integration
 
 ```cpp
-#include "dbcfile.h"
-#include "extract.h"
+#include "dbc/dbcfile.h"
+#include "dbc/extract.h"
 
 auto file = dbcfile::Loader::readDbcFile("path/to/file.dbc");
-dbc::v1::DbcFile result = extract::extractFile(file.get());
+dbc::DbcFile result = dbc::extract::extractFile(file.get());
 
 for (const auto& msg : result.messages()) {
     // Access signals, attributes, value descriptions, etc.
