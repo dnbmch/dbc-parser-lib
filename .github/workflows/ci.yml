@@ -14,10 +14,10 @@ jobs:
         include:
           - os: ubuntu-24.04
             name: Linux x86_64
-            artifact: dbcextract-x86_64-linux-gnu
+            artifact: dbcparser-x86_64-linux-gnu
           - os: ubuntu-24.04-arm
             name: Linux ARM64
-            artifact: dbcextract-aarch64-linux-gnu
+            artifact: dbcparser-aarch64-linux-gnu
 
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
@@ -68,8 +68,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           mkdir -p lib
-          gh release download --repo dnbmch/dbc-parser-lib --pattern "dbcextract-x86_64-windows-mingw*.tar.gz" --dir .
-          tar xzf dbcextract-x86_64-windows-mingw*.tar.gz -C lib/
+          gh release download --repo dnbmch/dbc-parser-lib --pattern "dbcparser-x86_64-windows-mingw*.tar.gz" --dir .
+          tar xzf dbcparser-x86_64-windows-mingw*.tar.gz -C lib/
 
       - name: Configure
         run: cmake -B build -G Ninja -DDBC_LIB_DIR=lib
@@ -103,8 +103,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           mkdir -p lib
-          gh release download --repo dnbmch/dbc-parser-lib --pattern "dbcextract-x86_64-windows-msvc*.tar.gz" --dir .
-          tar xzf dbcextract-x86_64-windows-msvc*.tar.gz -C lib/
+          gh release download --repo dnbmch/dbc-parser-lib --pattern "dbcparser-x86_64-windows-msvc*.tar.gz" --dir .
+          tar xzf dbcparser-x86_64-windows-msvc*.tar.gz -C lib/
 
       - name: Configure
         run: >

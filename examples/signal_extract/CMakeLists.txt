@@ -6,4 +6,4 @@ project(dbc_signal_extract LANGUAGES CXX)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../.. ${CMAKE_CURRENT_BINARY_DIR}/dbcparser)
 
 add_executable(dbc_signal main.cpp)
-target_link_libraries(dbc_signal PRIVATE dbcextract)
+target_link_libraries(dbc_signal PRIVATE dbcparser)

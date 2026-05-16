@@ -6,4 +6,4 @@ project(dbc_json_export LANGUAGES CXX)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../.. ${CMAKE_CURRENT_BINARY_DIR}/dbcparser)
 
 add_executable(dbc_json main.cpp)
-target_link_libraries(dbc_json PRIVATE dbcextract)
+target_link_libraries(dbc_json PRIVATE dbcparser)
