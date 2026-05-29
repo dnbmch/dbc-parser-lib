@@ -12,7 +12,6 @@ find_package(Protobuf CONFIG QUIET)
 if(NOT TARGET protobuf::libprotobuf)
     find_package(Protobuf REQUIRED)
 endif()
-find_package(absl CONFIG QUIET)
 
 # ---------------------------------------------------------------------------
 # Prebuilt static library
