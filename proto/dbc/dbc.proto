@@ -31,7 +31,7 @@ message Message {
   string name = 2;
   uint32 dlc = 3;
   string sender = 4;
-  bool is_extended_id = 5;                 // true if original ID had bit 31 set
+  bool is_extended_id = 5;                 // true if the message is a 29-bit extended frame (bit 31 set or id > 0x7FF)
   repeated Signal signals = 6;
   string comment = 7;                      // from CM_ BO_
   repeated string transmitters = 8;        // from BO_TX_BU_
