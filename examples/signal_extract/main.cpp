@@ -225,11 +225,13 @@ int main(int argc, char* argv[]) {
 
     for (int i = 0; i < dbc.messages_size() && i < 3; i++) {
         const auto& msg = dbc.messages(i);
-        uint8_t data[8];
-        for (int b = 0; b < 8; b++)
+        uint32_t dlc = msg.dlc() > 0 ? msg.dlc() : 8;
+        if (dlc > 64) dlc = 64; // CAN-FD caps payload at 64 bytes
+        uint8_t data[64] = {0};
+        for (uint32_t b = 0; b < dlc; b++)
             data[b] = static_cast<uint8_t>((i + 1) * 0x11 + b * 0x10);
 
-        decodeFrame(dbc, msg.id(), data, msg.dlc() > 0 ? msg.dlc() : 8);
+        decodeFrame(dbc, msg.id(), data, dlc);
         cout << endl;
     }
 
