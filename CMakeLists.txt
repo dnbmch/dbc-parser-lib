@@ -35,17 +35,19 @@ if(NOT DBC_LIB_PATH)
     endif()
 endif()
 
-add_library(dbcparser STATIC IMPORTED GLOBAL)
-set_target_properties(dbcparser PROPERTIES
-    IMPORTED_LOCATION "${DBC_LIB_PATH}"
-)
+if(NOT TARGET dbcparser)
+    add_library(dbcparser STATIC IMPORTED GLOBAL)
+    set_target_properties(dbcparser PROPERTIES
+        IMPORTED_LOCATION "${DBC_LIB_PATH}"
+    )
 
-target_include_directories(dbcparser INTERFACE
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${DBC_LIB_DIR}
-)
+    target_include_directories(dbcparser INTERFACE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${DBC_LIB_DIR}
+    )
 
-target_link_libraries(dbcparser INTERFACE protobuf::libprotobuf)
+    target_link_libraries(dbcparser INTERFACE protobuf::libprotobuf)
+endif()
 
 # ---------------------------------------------------------------------------
 # Examples

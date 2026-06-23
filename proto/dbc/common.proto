@@ -1,6 +1,22 @@
 syntax = "proto3";
 package dbc;
 
+// Severity of a parse-time diagnostic. Emitted only on lossy or guessed events,
+// never for losslessly-preserved content.
+enum Severity {
+  SEVERITY_UNSPECIFIED = 0;
+  WARNING = 1;   // value defaulted / truncated / out of enum range
+  DROPPED = 2;   // whole record or section skipped
+}
+
+// A single parse-time diagnostic. `location` is the best available position
+// (line number, section path, or block name).
+message Diagnostic {
+  string location = 1;
+  string message = 2;
+  Severity severity = 3;
+}
+
 enum ByteOrder {
   BYTE_ORDER_UNSPECIFIED = 0;
   BYTE_ORDER_LITTLE_ENDIAN = 1;  // Intel, @1

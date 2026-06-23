@@ -18,6 +18,8 @@ message DbcFile {
   repeated RelationalAttributeDefinition relational_attribute_definitions = 13;  // BA_DEF_REL_
   repeated AttributeDefault relational_attribute_defaults = 14;                  // BA_DEF_DEF_REL_
   repeated RelationalAttributeValue relational_attribute_values = 15;            // BA_REL_
+  repeated Diagnostic diagnostics = 16;                    // parse-time lossy/guessed events
+  uint32 schema_version = 17;                              // proto contract version
 }
 
 message Node {
@@ -119,10 +121,11 @@ message SignalGroup {
 
 // SG_MUL_VAL_ <msg_id> <signal_name> <mux_signal_name> <range1_min>-<range1_max>[, <range2_min>-<range2_max>] ;
 message ExtendedMultiplexValue {
-  uint32 message_id = 1;
+  uint32 message_id = 1;                    // CAN ID (bit 31 stripped)
   string signal_name = 2;
   string mux_signal_name = 3;
   repeated MuxRange ranges = 4;
+  bool is_extended_id = 5;                  // true if the message is a 29-bit extended frame
 }
 
 message MuxRange {

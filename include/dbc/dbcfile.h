@@ -143,6 +143,12 @@ struct RawRelationalAttributeValue {
     std::string value;
 };
 
+struct RawDiagnostic {
+    std::string location;       // "line N" / section path
+    std::string message;
+    int severity = 0;           // 1 = WARNING, 2 = DROPPED
+};
+
 struct DbcFile {
     std::string version;
     std::vector<std::string> new_symbols;
@@ -164,6 +170,7 @@ struct DbcFile {
     std::vector<RawRelationalAttributeDef> rel_attribute_defs;
     std::vector<RawRelationalAttributeDefault> rel_attribute_defaults;
     std::vector<RawRelationalAttributeValue> rel_attribute_values;
+    std::vector<RawDiagnostic> diagnostics;
 };
 
 struct Loader {
