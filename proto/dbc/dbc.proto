@@ -109,7 +109,9 @@ message EnvironmentVariable {
   string access_type = 8;              // DUMMY_NODE_VECTOR0, DUMMY_NODE_VECTOR8000, etc.
   repeated string access_nodes = 9;
   string comment = 10;                 // from CM_ EV_
-  uint32 data_size = 11;              // from ENVVAR_DATA_ (0 if not present)
+  uint32 data_size = 11;               // from ENVVAR_DATA_ (0 if not present)
+  repeated AttributeValue attributes = 12;             // from BA_ ... EV_
+  repeated ValueDescription value_descriptions = 13;   // from VAL_ <env var name> (no message id)
 }
 
 // SIG_GROUP_ <msg_id> <group_name> <repetitions> : <signal1> <signal2> ... ;

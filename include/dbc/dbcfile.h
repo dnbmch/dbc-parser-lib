@@ -101,6 +101,11 @@ struct RawEnvVarData {
     uint32_t data_size = 0;
 };
 
+struct RawEnvVarValueDescription {
+    std::string env_var_name;
+    std::vector<std::pair<int64_t, std::string>> entries;
+};
+
 struct RawSignalGroup {
     uint32_t message_id = 0;
     std::string name;
@@ -165,6 +170,7 @@ struct DbcFile {
     std::vector<RawTxBu> tx_bus;
     std::vector<RawEnvironmentVariable> env_vars;
     std::vector<RawEnvVarData> env_var_data;
+    std::vector<RawEnvVarValueDescription> env_var_value_descriptions;
     std::vector<RawSignalGroup> signal_groups;
     std::vector<RawExtendedMux> extended_mux;
     std::vector<RawRelationalAttributeDef> rel_attribute_defs;

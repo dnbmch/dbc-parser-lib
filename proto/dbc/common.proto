@@ -52,6 +52,7 @@ enum AttributeScope {
   ATTR_SCOPE_NODE = 2;
   ATTR_SCOPE_MESSAGE = 3;
   ATTR_SCOPE_SIGNAL = 4;
+  ATTR_SCOPE_ENV_VAR = 5;   // BA_ ... EV_ <env var name>
 }
 
 enum EnvironmentVariableType {
