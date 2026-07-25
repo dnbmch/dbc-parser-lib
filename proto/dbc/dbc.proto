@@ -21,6 +21,17 @@ message DbcFile {
   repeated Diagnostic diagnostics = 16;                    // lossy/guessed events (parse + merge layers)
   uint32 schema_version = 17;                              // proto contract version
   string comment = 18;                                     // from file-level CM_ (no scope)
+  repeated ValidationFinding validation_findings = 19;     // semantic defects, from opt-in validate()
+}
+
+// A single semantic defect found by dbc::extract::validate(). Reports defects in
+// a cleanly parsed file (overlap, DLC overrun, duplicate id, dangling receiver) —
+// distinct from Diagnostic, which reports parse lossiness.
+message ValidationFinding {
+  ValidationCheck check = 1;
+  FindingSeverity severity = 2;
+  string location = 3;   // e.g. "BO_ 853 SimpBMS_SOC / SG_ SOH"
+  string message = 4;
 }
 
 message Node {

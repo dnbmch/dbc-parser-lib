@@ -67,3 +67,22 @@ enum RelationalAttributeScope {
   REL_ATTR_SCOPE_BU_SG_REL = 1;  // node-to-signal
   REL_ATTR_SCOPE_BU_BO_REL = 2;  // node-to-message
 }
+
+// Semantic-validation check that produced a ValidationFinding. Reported by the
+// opt-in dbc::extract::validate() pass over a cleanly parsed file; independent
+// of the parse-lossiness Severity/Diagnostic channel above.
+enum ValidationCheck {
+  VALIDATION_CHECK_UNSPECIFIED = 0;
+  SIGNAL_OVERLAP = 1;          // two non-exclusive signals claim the same bits
+  SIGNAL_EXCEEDS_DLC = 2;      // a signal decodes past the frame payload
+  DUPLICATE_MESSAGE_ID = 3;    // two messages share (id, is_extended_id)
+  MISSING_RECEIVER_NODE = 4;   // a receiver is not declared in BU_
+}
+
+// Severity of a ValidationFinding. Distinct from the parse-time Severity enum:
+// carries ERROR (decode-affecting) which the parse channel never needs.
+enum FindingSeverity {
+  FINDING_SEVERITY_UNSPECIFIED = 0;
+  FINDING_WARNING = 1;   // consistency defect, decode unaffected
+  FINDING_ERROR = 2;     // decode-affecting defect
+}
