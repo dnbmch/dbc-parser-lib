@@ -14,7 +14,9 @@ namespace dbc::decode {
 struct DecodedSignal {
     const dbc::Signal* signal = nullptr;
     uint64_t raw        = 0;    // extracted bits, zero-extended
-    int64_t  raw_signed = 0;    // sign-extended when is_signed, else == raw
+    int64_t  raw_signed = 0;    // sign-extended when is_signed; otherwise the
+                                //   same bits reinterpreted as int64 (negative
+                                //   when an unsigned value exceeds INT64_MAX)
     double   physical   = 0.0;  // offset + factor * value
     const std::string* value_description = nullptr;  // matched VAL_ entry, or null
 };
